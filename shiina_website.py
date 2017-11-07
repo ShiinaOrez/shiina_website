@@ -41,11 +41,11 @@ class LoginForm(Form):
 	submit=SubmitField('Login')
 
 class RegisterForm(Form):
-	username=StringField('Username:',validators=[Length(3,20)])
-#	password=PasswordField('Password:',validators=[Length(3,20)],EqualTo('password2',message='Passwords must match!'))
-	password=PasswordField('Password:',[Required(),EqualTo('password2',message='Passwords must match!')])
+	username=StringField('Username:      ',validators=[Length(3,20)])
+	password=PasswordField('Password:      ',validators=[Length(3,20),EqualTo('password2',message='Passwords do not match')])
+#	password=PasswordField('Password:',[Required(),EqualTo('password2',message='Passwords must match!')])
 	password2=StringField('Password again:',validators=[Length(3,20)])
-	email=StringField('Your email:',validators=[Email()])
+	email=StringField('Your email:     ',validators=[Email()])
 	submit=SubmitField('Register now')
 
 if __name__=="__main__":
