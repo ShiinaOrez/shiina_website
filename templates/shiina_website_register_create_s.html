@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% import "bootstrap/wtf.html" as wtf %}
 <html>
 <head>
 	<h1 align="center" style="font-size: 50px;">Shiina Website</h1>
@@ -14,8 +13,16 @@
 	</style>
 </head>
 <body>
-	<div  class="body">
-		{{wtf.quick_form(form)}}
+	<div class="body">
+		<a style="font-size: 50px;color: red;">Welcome! {{name}}!
+		</a>
+		</br>
+		<input style="font-size: 30px;" type="button" onclick="window.open('/shiina_website')" value="Return Master Page")>
+		</input>
+		</br>
+		</br>
+		<input style="font-size: 30px;" type="button"
+		onclick="window.open('/shiina_website/usershare')" value="Your profile'">
 	</div>
 	<div class="botCenter">
 		this page is powered by shiina_orez.
