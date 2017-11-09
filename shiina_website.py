@@ -2,6 +2,7 @@ import os
 from flask import Flask,render_template,session,redirect,url_for,flash,request
 from flask_bootstrap import Bootstrap
 from flask_script import Manager
+from flask_migrate import Migrate,MigrateCommand
 from flask_wtf import Form
 from wtforms import StringField,SubmitField,PasswordField
 from wtforms.validators import Required,EqualTo,Regexp,Email,Length
@@ -13,18 +14,21 @@ app=Flask(__name__)
 
 app.config['SECRET_KEY']="mashiro"
 app.config['SQLALCHEMY_DATABASE_URI']=\
-	'sqlite:///' + os.path.join(basedir,'data.qulite')
+	'SQLITE:///' + os.path.join(basedir,'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
 bootstrap=Bootstrap(app)
 manager=Manager(app)
 db=SQLAlchemy(app)
+migrate=Migrate(app,db)
+
+manager.add_command('db',MigrateCommand)
 
 class User(db.Model):
 	__tablename__='users'
 	id=db.Column(db.Integer,primary_key=True)
-	username=db.Column(db.String(3,20),unique=True)
-	password=db.Column(db.String(3,20))
+	username=db.Column(db.String(20),unique=True)
+	password=db.Column(db.String(20))
 
 class LoginForm(Form):
 	username=StringField('Username:',validators=[Length(3,20)])
@@ -78,4 +82,4 @@ def page_not_found(e):
 
 if __name__=="__main__":
 	manager.run()
-#	app.run(debug=True)
+	app.run(debug=True)

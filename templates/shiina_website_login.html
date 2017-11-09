@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 {% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+<div class="container">
+	{% for message in get_flashed_message() %}
+	<div class="alert alert-warning">
+		<button type="button" class="close" data-dismiss="alert"> &times; </button>
+		{{message}}
+	</div>
+	{% endfor %}
+	{% block page_content %} {% endblock %}
+</div>
+{% endblock %}
 <html>
 <head>
 	<h1 align="center" style="font-size: 50px;">Shiina Website</h1>
