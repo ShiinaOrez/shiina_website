@@ -27,11 +27,11 @@ class User(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     username=db.Column(db.String(20),unique=True)
     password=db.Column(db.String(20))
-    email=db.Column(db.String(30),unique=True)
+#    email=db.Column(db.String(30),unique=True)
 
 class LoginForm(FlaskForm):
     username=StringField('Username:',validators=[Length(3,20)])
-    password=StringField('Password:',validators=[Length(3,20)])
+    password=PasswordField('Password:',validators=[Length(3,20)])
     submit=SubmitField('Login')
 
 class RegisterForm(FlaskForm):
@@ -50,15 +50,25 @@ def shiina_website():
 def shiina_website_usershare():
     return render_template("shiina_website_usershare.html")
 
+@app.route('/shiina_website/profile')
+def shiina_website_profile():
+	name=request.args.get("name")
+	return render_template("shiina_website_profile.html",name=name)
+
 @app.route('/shiina_website/login',methods=['GET','POST'])
 def shiina_website_login():
     form=LoginForm()
     if form.validate_on_submit():
-        name=request.form('username')
-        pasw=request.form('password')
-        if name is not None and pasw is not None:
-            flash('database is building!')
-        #return render_template("building.html")    
+        usr=User.query.filter_by(username=form.username.data).first()
+        if usr is None:
+        	flash('The user is not registed!')
+        	return redirect(url_for('shiina_website_login'))
+        else:
+        	if form.password.data == usr.password:
+        		return redirect(url_for('shiina_website_profile',name=form.username.data))
+        	else:
+        		flash('username or password is wrong!')
+        		return redirect(url_for('shiina_website_login'))
     return render_template("shiina_website_login.html",form=form)
 
 @app.route('/shiina_website/register',methods=['GET','POST'])
@@ -70,6 +80,7 @@ def shiina_website_register():
             usr=User(username=form.username.data,
                 password=form.password.data)
             db.session.add(usr)
+            db.session.commit()
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
         else:
             return render_template("shiina_website_register_create_f.html") 
