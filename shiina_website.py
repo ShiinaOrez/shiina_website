@@ -23,36 +23,53 @@ db = SQLAlchemy(app)
 
 
 class User(db.Model):
-    __tablename__='users'
-    id=db.Column(db.Integer,primary_key=True)
-    username=db.Column(db.String(20),unique=True)
-    password=db.Column(db.String(20))
+ 	__tablename__='users'
+	id=db.Column(db.Integer,primary_key=True)
+	username=db.Column(db.String(20),unique=True)
+    	password=db.Column(db.String(20))
 #    email=db.Column(db.String(30),unique=True)
+	texts=db.relationship('Test',backref='user')
+
+class Text(db.Model):
+	__tablename__='texts'
+	id=db.Column(db.Integer,primary_key=True)
+	topic=db.Column(db.String(20))
+	date=db.Column(db.String(20))
+	incl=db.Column(db.String(1000))
+	user_id=db.Column(db.Integer,db.ForeignKey('users.id'))
 
 class LoginForm(FlaskForm):
-    username=StringField('Username:',validators=[Length(3,20)])
-    password=PasswordField('Password:',validators=[Length(3,20)])
-    submit=SubmitField('Login')
+	username=StringField('Username:',validators=[Length(3,20)])
+ 	password=PasswordField('Password:',validators=[Length(3,20)])
+ 	submit=SubmitField('Login')
+
+class PostForm(FlaskForm):
+	topic=StringField('Topic:')
+	date=StringField('Date:')
+	main_txt=StringField('MainText:',validators=[Length(3,1000)])
+	submit=SubmitField('POST')
 
 class RegisterForm(FlaskForm):
-    username=StringField('Username:',validators=[Length(3,20)])
-    password=PasswordField('Password:',validators=[Length(3,20),EqualTo('password2',message='Passwords do not match')])
+	username=StringField('Username:',validators=[Length(3,20)])
+ 	password=PasswordField('Password:',validators=[Length(3,20),EqualTo('password2',message='Passwords do not match')])
 #   password=PasswordField('Password:',[Required(),EqualTo('password2',message='Passwords must match!')])
-    password2=StringField('Password again:',validators=[Length(3,20)])
-    email=StringField('Your email:',validators=[Email()])
-    submit=SubmitField('Register now')
+	password2=StringField('Password again:',validators=[Length(3,20)])
+	email=StringField('Your email:',validators=[Email()])
+	submit=SubmitField('Register now')
 
 @app.route('/shiina_website',methods=['GET','POST'])
 def shiina_website():
     return render_template("shiina_website_index.html")
 
-@app.route('/shiina_website/usershare')
-def shiina_website_usershare():
-    return render_template("shiina_website_usershare.html")
-
 @app.route('/shiina_website/profile')
 def shiina_website_profile():
+	form=PostForm()
 	name=request.args.get("name")
+	usr=User.query.filter_by(username=name).first()
+	if form.validate_on_submit():
+		txt=Text(topic=form.topic.data,date=form.date.data,incl=form.main_txt.data,user_id=usr.id)
+		db.session.add(txt)
+		db.session.commit()
 	return render_template("shiina_website_profile.html",name=name)
 
 @app.route('/shiina_website/login',methods=['GET','POST'])
