@@ -61,7 +61,7 @@ class RegisterForm(FlaskForm):
 def shiina_website():
     return render_template("shiina_website_index.html")
 
-@app.route('/shiina_website/profile')
+@app.route('/shiina_website/profile',methods=['GET','POST'])
 def shiina_website_profile():
 	form=PostForm()
 	name=request.args.get("name")
@@ -70,7 +70,12 @@ def shiina_website_profile():
 		txt=Text(topic=form.topic.data,date=form.date.data,incl=form.main_txt.data,user_id=usr.id)
 		db.session.add(txt)
 		db.session.commit()
+		return redirect(url_for('post_succ'),userid=usr.id,txtid=txt.id)
 	return render_template("shiina_website_profile.html",name=name)
+
+@app.route('/shiina_website/profile/post_succ/',methods=['GET','POST'])
+def post_succ():
+	return render_template('post_succ.html')
 
 @app.route('/shiina_website/login',methods=['GET','POST'])
 def shiina_website_login():
