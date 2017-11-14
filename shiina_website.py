@@ -14,7 +14,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-#app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 manager = Manager(app)
@@ -27,8 +26,8 @@ class User(db.Model):
 	id=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(20),unique=True)
     	password=db.Column(db.String(20))
-#	email=db.Column(db.String(30),unique=True)
-#	texts=db.relationship('Test',backref='user')
+#	useremail=db.Column(db.String(30),unique=True)
+	texts=db.relationship('Text',backref='user')
 
 class Text(db.Model):
 	__tablename__='texts'
@@ -52,9 +51,8 @@ class PostForm(FlaskForm):
 class RegisterForm(FlaskForm):
 	username=StringField('Username:',validators=[Length(3,20)])
  	password=PasswordField('Password:',validators=[Length(3,20),EqualTo('password2',message='Passwords do not match')])
-#   password=PasswordField('Password:',[Required(),EqualTo('password2',message='Passwords must match!')])
 	password2=StringField('Password again:',validators=[Length(3,20)])
-	email=StringField('Your email:',validators=[Email()])
+	useremail=StringField('Your email:',validators=[Email()])
 	submit=SubmitField('Register now')
 
 @app.route('/shiina_website',methods=['GET','POST'])
@@ -75,7 +73,8 @@ def shiina_website_profile():
 
 @app.route('/shiina_website/profile/post_succ/',methods=['GET','POST'])
 def post_succ():
-	return render_template('post_succ.html')
+	usr=User.query.filter_by(id=request.args.get('userid')).first()
+	return render_template('post_succ.html',name=usr.username)
 
 @app.route('/shiina_website/login',methods=['GET','POST'])
 def shiina_website_login():
@@ -100,8 +99,8 @@ def shiina_website_register():
         usr=User.query.filter_by(username=form.username.data).first()
         if usr is None:
             usr=User(username=form.username.data,
-                password=form.password.data)
- #               email=form.email.data)
+                	password=form.password.data)
+  #              	useremail=form.useremail.data)
             db.session.add(usr)
             db.session.commit()
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
