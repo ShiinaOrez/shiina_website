@@ -1,8 +1,8 @@
 import os
 from flask import Flask,render_template,session,redirect,url_for,flash,request
 from flask_bootstrap import Bootstrap
-from flask_script import Manager
-#from flask_migrate import Migrate,MigrateCommand
+from flask_script import Manager,Shell
+from flask_migrate import Migrate,MigrateCommand
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,PasswordField
 from wtforms.validators import Required,EqualTo,Regexp,Email,Length
@@ -19,14 +19,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
-
+migrate=Migrate(app,db)
+manager.add_command('db',MigrateCommand)
 
 class User(db.Model):
  	__tablename__='users'
 	id=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(20),unique=True)
     	password=db.Column(db.String(20))
-#	useremail=db.Column(db.String(30),unique=True)
+	useremail=db.Column(db.String(30),unique=True)
 	texts=db.relationship('Text',backref='user')
 
 class Text(db.Model):
@@ -99,8 +100,8 @@ def shiina_website_register():
         usr=User.query.filter_by(username=form.username.data).first()
         if usr is None:
             usr=User(username=form.username.data,
-                	password=form.password.data)
-  #              	useremail=form.useremail.data)
+                	password=form.password.data,
+                	useremail=form.useremail.data)
             db.session.add(usr)
             db.session.commit()
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
@@ -115,6 +116,11 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'),500
+
+def make_shell_context():
+	return dict(app=app,db=db,User=User,Text=Text)
+
+manager.add_command("shell",Shell(make_context=make_shell_context))
 
 if __name__ == '__main__':
     manager.run()
