@@ -27,8 +27,8 @@ class User(db.Model):
 	id=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(20),unique=True)
     	password=db.Column(db.String(20))
-#    email=db.Column(db.String(30),unique=True)
-	texts=db.relationship('Test',backref='user')
+#	email=db.Column(db.String(30),unique=True)
+#	texts=db.relationship('Test',backref='user')
 
 class Text(db.Model):
 	__tablename__='texts'
@@ -70,8 +70,8 @@ def shiina_website_profile():
 		txt=Text(topic=form.topic.data,date=form.date.data,incl=form.main_txt.data,user_id=usr.id)
 		db.session.add(txt)
 		db.session.commit()
-		return redirect(url_for('post_succ'),userid=usr.id,txtid=txt.id)
-	return render_template("shiina_website_profile.html",name=name)
+		return redirect(url_for('post_succ',userid=usr.id,txtid=txt.id))
+	return render_template("shiina_website_profile.html",name=name,form=form)
 
 @app.route('/shiina_website/profile/post_succ/',methods=['GET','POST'])
 def post_succ():
@@ -101,6 +101,7 @@ def shiina_website_register():
         if usr is None:
             usr=User(username=form.username.data,
                 password=form.password.data)
+ #               email=form.email.data)
             db.session.add(usr)
             db.session.commit()
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
