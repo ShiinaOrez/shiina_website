@@ -2,11 +2,13 @@ import os
 from flask import Flask,render_template,session,redirect,url_for,flash,request
 from flask_bootstrap import Bootstrap
 from flask_script import Manager,Shell
+from flask_mail import Mail,Message
 from flask_migrate import Migrate,MigrateCommand
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField,PasswordField
 from wtforms.validators import Required,EqualTo,Regexp,Email,Length
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash,check_password_hash
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -15,20 +17,37 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['MAIL_SERVER']='smtp.qq.com'
+app.config['MAIL_POST']=465
+app.config['MAIL_USE_TLS']=True
+app.config['MAIL_USERNAME']=os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD']=os.environ.get('MAIL_PASSWORD')
+app.config['FLASKY_MAIL_SUBJECT_PREFIX']='[Flasky]'
+app.config['FLASKY_MAIL_SENDER']='Flasky Admin <shiina_orez@qq.com>'
+app.config['FLASKY_ADMIN']=os.environ.get('FLASKY_ADMIN')
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 migrate=Migrate(app,db)
 manager.add_command('db',MigrateCommand)
+mail=Mail(app)
 
 class User(db.Model):
  	__tablename__='users'
 	id=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(20),unique=True)
     	password=db.Column(db.String(20))
+        password_hash=db.Column(db.String(128))
 	useremail=db.Column(db.String(30),unique=True)
 	texts=db.relationship('Text',backref='user')
+        @property
+        def password(self):
+            raise AttributeError('password is not a readable attribute')
+	@password.setter
+        def password(self,password):
+            self.password_hash=generate_password_hash(password)
+        def verify_password(self,password):
+            return check_password_hash(self.password_hash,password)
 
 class Text(db.Model):
 	__tablename__='texts'
@@ -104,6 +123,11 @@ def shiina_website_register():
                 	useremail=form.useremail.data)
             db.session.add(usr)
             db.session.commit()
+            if app.config['FLASKY_ADMIN']:
+                send_email(app.config['FLASKY_ADMIN'],
+                                    'NewUser',
+                                    'mail/new_user',
+                                    user=usr)
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
         else:
             return render_template("shiina_website_register_create_f.html") 
@@ -117,8 +141,16 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'),500
 
+def send_email(to,subject,template,**kwargs):
+    msg=Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX']+subject,
+                            sender=app.config['FLASKY_MAIL_SENDER'],
+                            recipients=[to])
+    msg.body=render_template(template+'txt',**kwargs)
+    msg.html=render_template(template+'html',**kwargs)
+    mail.send(msg)
+
 def make_shell_context():
-	return dict(app=app,db=db,User=User,Text=Text)
+    return dict(app=app,db=db,User=User,Text=Text)
 
 manager.add_command("shell",Shell(make_context=make_shell_context))
 
