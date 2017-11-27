@@ -9,6 +9,7 @@ from wtforms import StringField,SubmitField,PasswordField
 from wtforms.validators import Required,EqualTo,Regexp,Email,Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
+from flask_login import UserMixin,LoginManager
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -32,7 +33,11 @@ migrate=Migrate(app,db)
 manager.add_command('db',MigrateCommand)
 mail=Mail(app)
 
-class User(db.Model):
+login_manager=LoginManager()
+login_manager.session_protection='strong'
+login_manager.login_view='shiina_website_login'
+
+class User(UserMixin,db.Model):
  	__tablename__='users'
 	id=db.Column(db.Integer,primary_key=True)
 	username=db.Column(db.String(20),unique=True)
