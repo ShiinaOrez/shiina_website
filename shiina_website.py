@@ -5,7 +5,7 @@ from flask_script import Manager,Shell
 from flask_mail import Mail,Message
 from flask_migrate import Migrate,MigrateCommand
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField,PasswordField
+from wtforms import StringField,SubmitField,PasswordField,BooleanField
 from wtforms.validators import Required,EqualTo,Regexp,Email,Length
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -65,6 +65,7 @@ class Text(db.Model):
 class LoginForm(FlaskForm):
 	username=StringField('Username:',validators=[Length(3,20)])
  	password=PasswordField('Password:',validators=[Length(3,20)])
+	remeber_me=BooleanField('Remeber me')
  	submit=SubmitField('Login')
 
 class PostForm(FlaskForm):

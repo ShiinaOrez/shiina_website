@@ -53,11 +53,11 @@ def shiina_website_register():
                 	useremail=form.useremail.data)
             db.session.add(usr)
             db.session.commit()
-            if app.config['FLASKY_ADMIN']:
-                send_email(app.config['FLASKY_ADMIN'],
-                                    'NewUser',
-                                    'mail/new_user',
-                                    user=usr)
+#            if app.config['FLASKY_ADMIN']:
+ #               send_email(app.config['FLASKY_ADMIN'],
+  #                                  'NewUser',
+   #                                 'mail/new_user',
+    #                                user=usr)
             return render_template("shiina_website_register_create_s.html",name=form.username.data)
         else:
             return render_template("shiina_website_register_create_f.html") 

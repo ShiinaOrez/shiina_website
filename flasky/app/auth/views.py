@@ -7,7 +7,7 @@ from .forms import LoginForm,RegisterForm
 
 @auth.route('/')
 def index():
-	return render_template('index.html')
+	return render_template('auth/index.html')
 
 @auth.route('/login',methods=['GET','POST'])
 def login():
@@ -19,10 +19,10 @@ def login():
         	return redirect(url_for('shiina_website_login'))
         else:
         	if usr.verify_password(form.password.data):
-        		return redirect(url_for('shiina_website_profile',name=form.username.data))
+        		return redirect(url_for('profile',name=form.username.data))
         	else:
         		flash('username or password is wrong!')
-        		return redirect(url_for('shiina_website_login'))
+        		return redirect(url_for('login'))
     return render_template("auth/login.html",form=form)
 
 @auth.route('/logout')
@@ -41,14 +41,14 @@ def register():
             		usr=User(username=form.username.data,
                 		password=form.password.data,
                 		useremail=form.useremail.data)
-#           		 db.session.add(usr)
- #         		  db.session.commit()
-            		if app.config['FLASKY_ADMIN']:
-                		send_email(app.config['FLASKY_ADMIN'],
-                        		            'NewUser',
-                                		    'mail/new_user',
-                                   			user=usr)
-            		return render_template("register_create_s.html",name=form.username.data)
+           		db.session.add(usr)
+         		db.session.commit()
+#            		if app.config['FLASKY_ADMIN']:
+ #               		send_email(app.config['FLASKY_ADMIN'],
+  #                      		            'NewUser',
+   #                             		    'mail/new_user',
+    #                               			user=usr)
+            		return render_template("auth/register_create_s.html",name=form.username.data)
         	else:
-            		return render_template("register_create_f.html") 
+            		return render_template("auth/register_create_f.html") 
     	return render_template("auth/register.html",form=form)
