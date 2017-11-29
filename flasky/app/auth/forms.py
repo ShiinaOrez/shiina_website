@@ -4,6 +4,12 @@ from wtforms import ValidationError
 from wtforms.validators import Length,Email,EqualTo
 from ..models import User
 
+class CPForm(Form):
+	pre_password=StringField('Old password:',validators=[Length(3,20)])
+	new_password=PasswordField('New password:',validators=[Length(3,20),EqualTo('new_password2',message='Passwords do not match')])
+	new_password2=StringField('Password again:',validators=[Length(3,20)])
+	submit=SubmitField('Submit')
+
 class LoginForm(Form):
 	username=StringField('Username:',validators=[Length(3,20)])
  	password=PasswordField('Password:',validators=[Length(3,20)])

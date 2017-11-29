@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+{% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 <div class="container">
 	{% for message in get_flashed_messages() %}
@@ -11,10 +11,11 @@
 	{% block page_content %} {% endblock %}
 </div>
 {% endblock %}
+<html>
 <head>
 	<h1 align="center" style="font-size: 50px;">Shiina Website</h1>
 	<hr style="border: 1 dashed #987cb9" width ="80%" color= #987cb9 size="8">
-	<h3 align="center">Welcome to shiina website skip page!</h3>
+	<h3 align="center">Welcome to account configurations page!</h3>
 	<hr style="border: 1 dashed #987cb9 " width="60%" color=#987cb9 size="4">
 	<style>
 /*		#main{position: absolute;width: 400px;height: 200px;left: 50%;top: 50%;margin-left: -200px;margin-top: -100px;border: 1px solid #00F}*/
@@ -25,15 +26,17 @@
 </head>
 <body>
 	<div class="body">
-		<a style="font-size: 50px;color: pink;">Welcome! {{name}}!
+		<a style="color: red;font-size: 20px;">Your ID:{{id}} 
 		</a>
 		</br>
-		<input style="font-size: 30px;" type="button" onclick="window.open('/auth')" value="Return Master Page")>
-		</input>
+		<a style="color: red;font-size: 20px;">Your UserName:{{name}} 
+		</a>
+	</div>
+	<div class="body">
 		</br>
 		</br>
 		<input style="font-size: 30px;" type="button"
-		onclick="window.open('/auth/profile/?username={{name}}')" value="Your profile">
+		onclick="window.open('/auth/change_password/?username={{name}}')" value="Change My Password">
 	</div>
 	<div class="botCenter">
 		this page is powered by shiina_orez.
