@@ -3,7 +3,7 @@ from flask_login import login_user,logout_user,login_required
 from . import auth
 from .. import db
 #from ..email import email_send
-from ..models import User
+from ..models import User,Text
 from .forms import LoginForm,RegisterForm,PostForm,CPForm
 
 @auth.route('/')
@@ -74,3 +74,20 @@ def change_password():
 		flash('Saved your alteration successful!')
 		return redirect(url_for('auth.account_configuration',username=usr.username))
 	return render_template("auth/change_password.html",form=form)
+
+@auth.route('/post_text/',methods=['GET','POST'])
+def post_text():
+	form=PostForm()
+	usrname=request.args.get('username')
+	usr=User.query.filter_by(username=usrname).first()
+	if form.validate_on_submit():
+		txt=Text(incl=form.incl.data,user_id=usr.id)
+		db.session.add(txt)
+		db.session.commit()
+		return redirect(url_for('auth.activities',username=usr.username))
+	return render_template("auth/post_text.html",form=form)
+		
+@auth.route('/activities/',methods=['GET','POST'])
+def activities():
+	texts=Text.query.all()
+	return render_template("auth/activities.html",texts=texts)

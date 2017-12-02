@@ -17,9 +17,9 @@ class LoginForm(Form):
  	submit=SubmitField('Login')
 
 class PostForm(Form):
-	topic=StringField('Topic:')
-	date=StringField('Date:')
-	main_txt=StringField('MainText:',validators=[Length(3,1000)])
+#	topic=StringField('Topic:')
+#	date=StringField('Date:')
+	incl=StringField('MainText:',validators=[Length(3,1000)])
 	submit=SubmitField('POST')
 
 class RegisterForm(Form):
