@@ -84,10 +84,11 @@ def post_text():
 		txt=Text(incl=form.incl.data,user_id=usr.id)
 		db.session.add(txt)
 		db.session.commit()
-		return redirect(url_for('auth.activities',username=usr.username))
+		return redirect(url_for('auth.activities',username=usr.username,))
 	return render_template("auth/post_text.html",form=form)
 		
 @auth.route('/activities/',methods=['GET','POST'])
 def activities():
+	usrname=request.args.get('username')
 	texts=Text.query.all()
-	return render_template("auth/activities.html",texts=texts)
+	return render_template("auth/activities.html",texts=texts,username=usrname)

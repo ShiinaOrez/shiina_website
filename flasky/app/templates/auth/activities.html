@@ -25,22 +25,30 @@
 </head>
 <body>
 	<div class="body">
-		</br>
-		</br>
+		{% if username %} <a style="font-size: 20px;">hello,{{username}}!</a>
+		{% else %}<a style="font-size: 20px;">hello,passenger!</a>
+		{% endif %}
 		</br>
 		{% for text in texts %}
 			<hr style="border: 1 dashed #987cb9" width ="50%" color= blue size="6">
-			<h3>Poster ID:{{text.user_id}}</h3>
-			<a style="color: red;font-size: 20px;">  {{text.incl}}<a>
+			<h3>Poster ID:{{text.user_id}} </h3>
+			<a style="color: red;font-size: 20px;">  {{text.incl}} </a>
 		{% endfor %}
-	</div>
-	<div>
+		<hr style="border: 1 dashed #987cb9" width ="50%" color= blue size="6">
 		{% if username %}
 			</br>
 			<input style="font-size: 30px;" type="button"
 			onclick="window.open('/auth/profile/?username={{username}}')" value="Back To Profile">
+			</input>
+		{% else %}
+			</br>
+			<input style="font-size: 30px;" type="button"
+			onclick="window.open('/auth/')" value="Back To Index">
+			</input>
 		{% endif %}
 	</div>
+	</br>
+	</br>
 	<div class="botCenter">
 		this page is powered by shiina_orez.
 		<hr style="border: 1 dashed #987cb9 " width="60%" color=#987cb9 size="4">

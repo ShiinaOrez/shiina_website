@@ -25,8 +25,20 @@
 	</style>
 </head>
 <body>
+	</br>
+	</br>
+	</br>
 	<div  class="body">
-		{{wtf.quick_form(form)}}
+		<form class="form" method="POST" style="color: #987cb9;font-size: 40px;">
+			{{ form.hidden_tag() }}
+			{{ wtf.form_field(form.username) }}
+			{{ wtf.form_field(form.password) }}
+			{{ wtf.form_field(form.password2) }}
+			{{ wtf.form_field(form.useremail) }}
+			</br>
+			<input style="font-size: 40px;color: #987cb9;" type="submit" value="Registe Now">
+			</input>
+		</form>
 	</div>
 	<div class="botCenter">
 		this page is powered by shiina_orez.

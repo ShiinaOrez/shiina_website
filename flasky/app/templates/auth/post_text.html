@@ -29,7 +29,13 @@
 		</br>
 		</br>
 		</br>
-		{{wtf.quick_form(form)}}
+		<form class="form" method="POST" style="color: #987cb9;font-size: 40px;">
+			{{ form.hidden_tag() }}
+			{{ wtf.form_field(form.incl) }}
+			</br>
+			<input style="font-size: 40px;color: #987cb9;" type="submit" value="POST">
+			</input>
+		</form>
 	</div>
 	<div class="botCenter">
 		this page is powered by shiina_orez.
