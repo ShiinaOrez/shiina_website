@@ -4,7 +4,7 @@ from . import auth
 from .. import db
 #from ..email import email_send
 from ..models import User,Text
-from .forms import LoginForm,RegisterForm,PostForm,CPForm
+from .forms import LoginForm,RegisterForm,PostForm,CPForm,PersonalForm
 
 @auth.route('/')
 def index():
@@ -56,7 +56,7 @@ def profile():
 #	form=ProfileForm
 	usrname=request.args.get('username')
 	usr=User.query.filter_by(username=usrname).first()
-	return render_template("auth/profile.html",name=usr.username)
+	return render_template("auth/profile.html",name=usr.username,usr=usr)
 
 @auth.route('/profile_configuration/',methods=['GET','POST'])
 def account_configuration():
@@ -84,7 +84,7 @@ def post_text():
 		txt=Text(incl=form.incl.data,user_id=usr.id)
 		db.session.add(txt)
 		db.session.commit()
-		return redirect(url_for('auth.activities',username=usr.username,))
+		return redirect(url_for('auth.activities',username=usr.username))
 	return render_template("auth/post_text.html",form=form)
 		
 @auth.route('/activities/',methods=['GET','POST'])
@@ -92,3 +92,15 @@ def activities():
 	usrname=request.args.get('username')
 	texts=Text.query.all()
 	return render_template("auth/activities.html",texts=texts,username=usrname)
+
+@auth.route('/change_personal_s/',methods=['GET','POST'])
+def change_personal_s():
+	form=PersonalForm()
+	usrname=request.args.get('username')
+	usr=User.query.filter_by(username=usrname).first()
+	if form.validate_on_submit():
+		usr.personal_s=form.signal.data
+		db.session.add(usr)
+		db.session.commit()
+		return redirect(url_for('auth.profile',username=usr.username))
+	return render_template("auth/change_personal_s.html",form=form)

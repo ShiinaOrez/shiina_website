@@ -4,6 +4,10 @@ from wtforms import ValidationError
 from wtforms.validators import Length,Email,EqualTo
 from ..models import User
 
+class PersonalForm(Form):
+	signal=StringField('Your Signal:',validators=[Length(0,300)])
+	submit=SubmitField('Submit')
+
 class CPForm(Form):
 	pre_password=StringField('Old password:',validators=[Length(3,20)])
 	new_password=PasswordField('New password:',validators=[Length(3,20),EqualTo('new_password2',message='Passwords do not match')])
