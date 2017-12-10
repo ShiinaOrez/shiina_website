@@ -1,6 +1,6 @@
 from . import db,login_manager
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin,AnonymousUserMixin
 
 class User(UserMixin,db.Model):
  	__tablename__='users'
@@ -19,6 +19,17 @@ class User(UserMixin,db.Model):
             self.password_hash=generate_password_hash(password)
         def verify_password(self,password):
             return check_password_hash(self.password_hash,password)
+	def __init__(self,**kwargs):
+		super(User,self).__init__(**kwargs)
+		if self.role is None:
+			if self.email==current_app.config['FLASK_ADMIN']:
+				self.role=Role.query.filter_by(permissions=0xff).first()
+			if self.role is None:
+				self.role=Role.query.filter_by(default=True).first()
+	def can(self,permissions):
+		return self.role is not None and (self.role.permissions&permissions)==permissions
+	def is_administrator(self):
+		return self.can(Permission.ADMINISTER)
 
 class Text(db.Model):
 	__tablename__='texts'
@@ -42,9 +53,9 @@ class Role(db.Model):
 				Permission.COMMENTS|
 				Permission.WRITE_ARTICLES,True),
 			'Moderator':(Permission.FOLLOW|
-				Permission.COMMENTS|
-				Permission.WRITE_ARTICLES|
-				Permission.MODERATE_COMMENTS,False)
+					Permission.COMMENTS|
+					Permission.WRITE_ARTICLES|
+					Permission.MODERATE_COMMENTS,False),
 			'Administrator':(0xff,False)
 		}	
 		for r in roles:
@@ -63,6 +74,14 @@ class Permission:
 	WRITE_ARTICLES=0x04
 	MODERATE_COMMENTS=0x08
 	ADMINISTER=0x80
+
+class AnonymousUser(AnonsymousUserMixin):
+	def can(self,permissions):
+		return false
+	def is_administrator(self):
+		return false
+
+login_manager,anonymous_user=AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):
