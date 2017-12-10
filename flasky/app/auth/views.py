@@ -81,10 +81,10 @@ def write_articles():
 	usrname=request.args.get('username')
 	usr=User.query.filter_by(username=usrname).first()
 	if form.validate_on_submit():
-		arti=Arti(topic=form.topic.data,txt=form.txt.data)
+		arti=Arti(topic=form.topic.data,txt=form.txt.data,user_id=usr.id)
 		db.session.add(arti)
 		db.session.commit()
-		return redirect(url_for('auth.profile',username=usrname))
+		return redirect(url_for('auth.profile',username=usrname,usr=usr))
 	return render_template("auth/profile.html",name=usrname,form=form,usr=usr,write_arti_is_on=1)
 
 @auth.route('/post_text/',methods=['GET','POST'])
