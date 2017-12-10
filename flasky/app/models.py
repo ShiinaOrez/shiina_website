@@ -11,6 +11,8 @@ class User(UserMixin,db.Model):
 	useremail=db.Column(db.String(30),unique=True)
 	personal_s=db.Column(db.String(600))
 	texts=db.relationship('Text',backref='user')
+	artis=db.relationship('Arti',backref='user')
+	role_id=db.Column(db.Integer,db.ForeignKey('roles.id'))
         @property
         def password(self):
             raise AttributeError('password is not a readable attribute')
@@ -34,9 +36,16 @@ class User(UserMixin,db.Model):
 class Text(db.Model):
 	__tablename__='texts'
 	id=db.Column(db.Integer,primary_key=True)
-	topic=db.Column(db.String(20))
-	date=db.Column(db.String(20))
+#	topic=db.Column(db.String(20))
+#	date=db.Column(db.String(20))
 	incl=db.Column(db.String(1000))
+	user_id=db.Column(db.Integer,db.ForeignKey('users.id'))
+
+class Arti(db.Model):
+	__tablename__='artis'
+	id=db.Column(db.Integer,primary_key=True)
+	topic=db.Column(db.String(20))
+	txt=db.Column(db.String(2000))
 	user_id=db.Column(db.Integer,db.ForeignKey('users.id'))
 
 class Role(db.Model):
@@ -75,13 +84,13 @@ class Permission:
 	MODERATE_COMMENTS=0x08
 	ADMINISTER=0x80
 
-class AnonymousUser(AnonsymousUserMixin):
+class AnonymousUser(AnonymousUserMixin):
 	def can(self,permissions):
 		return false
 	def is_administrator(self):
 		return false
 
-login_manager,anonymous_user=AnonymousUser
+login_manager.anonymous_user=AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):

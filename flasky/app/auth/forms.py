@@ -4,6 +4,11 @@ from wtforms import ValidationError
 from wtforms.validators import Length,Email,EqualTo
 from ..models import User
 
+class WAForm(Form):
+	topic=StringField('Topic:',validators=[Length(1,20)])
+	txt=StringField('Main Text:',validators=[Length(1,2000)])
+	submit=SubmitField('Submit')
+
 class PersonalForm(Form):
 	signal=StringField('Your Signal:',validators=[Length(0,300)])
 	submit=SubmitField('Submit')

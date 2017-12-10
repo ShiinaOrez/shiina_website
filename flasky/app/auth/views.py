@@ -3,8 +3,8 @@ from flask_login import login_user,logout_user,login_required
 from . import auth
 from .. import db
 #from ..email import email_send
-from ..models import User,Text
-from .forms import LoginForm,RegisterForm,PostForm,CPForm,PersonalForm
+from ..models import User,Text,Arti
+from .forms import LoginForm,RegisterForm,PostForm,CPForm,PersonalForm,WAForm
 
 @auth.route('/')
 def index():
@@ -74,6 +74,18 @@ def change_password():
 		flash('Saved your alteration successful!')
 		return redirect(url_for('auth.account_configuration',username=usr.username))
 	return render_template("auth/change_password.html",form=form)
+
+@auth.route('/write_articles/',methods=['GET','POST'])
+def write_articles():
+	form=WAForm()
+	usrname=request.args.get('username')
+	usr=User.query.filter_by(username=usrname).first()
+	if form.validate_on_submit():
+		arti=Arti(topic=form.topic.data,txt=form.txt.data)
+		db.session.add(arti)
+		db.session.commit()
+		return redirect(url_for('auth.profile',username=usrname))
+	return render_template("auth/profile.html",name=usrname,form=form,usr=usr,write_arti_is_on=1)
 
 @auth.route('/post_text/',methods=['GET','POST'])
 def post_text():

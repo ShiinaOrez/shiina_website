@@ -35,8 +35,28 @@
 		<div class="body">
 			<a style="font-size: 20px;color: blue;">{{usr.personal_s}}
 			</a>
+			</br>
+			{% if write_arti_is_on %}
+				<form class="form" method="POST" style="color: #987cb9;font-size: 40px;">
+					{{ form.hidden_tag() }}
+					{{ wtf.form_field(form.topic) }}
+					{{ wtf.form_field(form.txt) }}
+					</br>
+					<input style="font-size: 35px;color: #987cb9;" type="submit" value="POST">
+					</input>
+				</form>
+			{% else %}
+				<input style="font-size: 30px;" type="button" onclick="window.open('/auth/write_articles/?username={{name}}')" value="Write Articles")>
+			{% endif %}
+			<hr style="border: 1 dashed #987cb9 " width="60%" color=#987cb9 size="4">
+			{% for a in usr.artis %}
+				<a style="font-size: 35px;color: red;">{{a.topic}} </a>
+				</br>
+				<a style="font-size: 20px;color: #987cb9;">{{a.txt}}</a>
+				<hr style="border: 1 dashed #987cb9 " width="60%" color=#987cb9 size="4">
+			{% endfor %}
 		</div>
-		<div style="float: left;">
+		<div style="float: left;position: fixed;">
 			</br>
 			<input style="font-size: 30px;" type="button" onclick="window.open('/auth/change_personal_s/?username={{name}}')" value="Change Signal")>
 			</br>
