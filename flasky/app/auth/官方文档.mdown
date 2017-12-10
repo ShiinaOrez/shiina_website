@@ -1,5 +1,6 @@
+
 |name|User|用户|
-|----|----|__|
+|----|----|--|
 |__tablename__|users|string|
 |id|序号|integer|
 |username|用户名|string|
@@ -10,7 +11,9 @@
 |texts|动态|table|
 |artis|文章|table|
 |role_id|角色身份|integer|
+
 -----
+
 |name|Text|动态|
 |----|----|----|
 |__tablename__|||
