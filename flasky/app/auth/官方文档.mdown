@@ -1,0 +1,16 @@
+|name|User|用户|
+|----|----|__|
+|__tablename__|users|string|
+|id|序号|integer|
+|username|用户名|string|
+|password|密码|string|
+|password_hash|密码散列|string|
+|useremail|用户电子邮箱|string|
+|personal_s|个性签名|string|
+|texts|动态|table|
+|artis|文章|table|
+|role_id|角色身份|integer|
+-----
+|name|Text|动态|
+|----|----|----|
+|__tablename__|||
