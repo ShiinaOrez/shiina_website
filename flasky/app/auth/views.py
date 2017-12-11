@@ -71,6 +71,8 @@ def change_password():
 	usr=User.query.filter_by(username=usrname).first()
 	if form.validate_on_submit():
 		usr.password=form.new_password.data
+		db.session.add(usr)
+		db.session.commit()
 		flash('Saved your alteration successful!')
 		return redirect(url_for('auth.account_configuration',username=usr.username))
 	return render_template("auth/change_password.html",form=form)
@@ -86,6 +88,12 @@ def write_articles():
 		db.session.commit()
 		return redirect(url_for('auth.profile',username=usrname,usr=usr))
 	return render_template("auth/profile.html",name=usrname,form=form,usr=usr,write_arti_is_on=1)
+
+@auth.route('/manage_articles/',methods=['GET','POST'])
+def manage_artiles():
+	usrname=request.args.get('username')
+	usr=User.query.filter_by(username=usrname).first()
+	return render_template("auth/manage_articles.html",usr=usr)
 
 @auth.route('/post_text/',methods=['GET','POST'])
 def post_text():
