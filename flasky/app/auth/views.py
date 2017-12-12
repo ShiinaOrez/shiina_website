@@ -4,7 +4,7 @@ from . import auth
 from .. import db
 #from ..email import email_send
 from ..models import User,Text,Arti
-from .forms import LoginForm,RegisterForm,PostForm,CPForm,PersonalForm,WAForm
+from .forms import ManageForm,LoginForm,RegisterForm,PostForm,CPForm,PersonalForm,WAForm
 
 @auth.route('/')
 def index():
@@ -91,9 +91,10 @@ def write_articles():
 
 @auth.route('/manage_articles/',methods=['GET','POST'])
 def manage_artiles():
+	form=ManageForm()
 	usrname=request.args.get('username')
 	usr=User.query.filter_by(username=usrname).first()
-	return render_template("auth/manage_articles.html",usr=usr)
+	return render_template("auth/manage_articles.html",usr=usr,form=form)
 
 @auth.route('/post_text/',methods=['GET','POST'])
 def post_text():

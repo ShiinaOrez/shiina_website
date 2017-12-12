@@ -4,6 +4,10 @@ from wtforms import ValidationError
 from wtforms.validators import Length,Email,EqualTo
 from ..models import User
 
+class ManageForm(Form):
+	arti_topic=BooleanField('Topic:')
+	submit=SubmitField('Delete')
+
 class WAForm(Form):
 	topic=StringField('Topic:',validators=[Length(1,20)])
 	txt=StringField('Main Text:',validators=[Length(1,2000)])
