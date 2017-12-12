@@ -4,7 +4,7 @@ from . import auth
 from .. import db
 #from ..email import email_send
 from ..models import User,Text,Arti
-from .forms import ManageForm,LoginForm,RegisterForm,PostForm,CPForm,PersonalForm,WAForm
+from .forms import LoginForm,RegisterForm,PostForm,CPForm,PersonalForm,WAForm
 
 @auth.route('/')
 def index():
@@ -90,11 +90,21 @@ def write_articles():
 	return render_template("auth/profile.html",name=usrname,form=form,usr=usr,write_arti_is_on=1)
 
 @auth.route('/manage_articles/',methods=['GET','POST'])
-def manage_artiles():
-	form=ManageForm()
+def manage_articles():
 	usrname=request.args.get('username')
 	usr=User.query.filter_by(username=usrname).first()
-	return render_template("auth/manage_articles.html",usr=usr,form=form)
+	return render_template("auth/manage_articles.html",usr=usr)
+
+@auth.route('/delete_articles/',methods=['GET','POST'])
+def delete_articles():
+	usrname=request.args.get('username')
+#	usr=User.query.filter_by(username=usrname).first()
+	id=request.args.get('arti_id')
+	arti=Arti.query.filter_by(id=id).first()
+	db.session.delete(arti)
+	db.session.commit()
+	usr=User.query.filter_by(username=usrname).first()
+	return redirect(url_for('auth.manage_articles',username=usrname,usr=usr))
 
 @auth.route('/post_text/',methods=['GET','POST'])
 def post_text():
