@@ -24,12 +24,17 @@ class User(UserMixin,db.Model):
 	def __init__(self,**kwargs):
 		super(User,self).__init__(**kwargs)
 		if self.role is None:
-			if self.email==current_app.config['FLASK_ADMIN']:
+			if self.useremail==current_app.config['FLASK_ADMIN']:
 				self.role=Role.query.filter_by(permissions=0xff).first()
-			if self.role is None:
-				self.role=Role.query.filter_by(default=True).first()
+			if self.role_id is None:
+				self.role_id=Role.query.filter_by(default=True).first()
+	def to_json(self):
+		json_user={
+			
+		}
+
 	def can(self,permissions):
-		return self.role is not None and (self.role.permissions&permissions)==permissions
+		return self.role_id is not None and (self.role_id.permissions&permissions)==permissions
 	def is_administrator(self):
 		return self.can(Permission.ADMINISTER)
 	def generate_auth_token(self,expiration):

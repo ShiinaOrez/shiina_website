@@ -1,4 +1,4 @@
-from flask import render_template,session,redirect,url_for,request
+from flask import render_template,session,redirect,url_for,request,flash
 
 from . import main
 from .forms import LoginForm,RegisterForm,PostForm

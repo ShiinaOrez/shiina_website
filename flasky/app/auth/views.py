@@ -17,7 +17,7 @@ def login():
         usr=User.query.filter_by(username=form.username.data).first()
         if usr is None:
         	flash('The user is not registed!')
-        	return redirect(url_for('login'))
+        	return redirect(url_for('auth.login'))
         else:
         	if usr.verify_password(form.password.data):
         		return redirect(url_for('auth.profile',username=form.username.data))
